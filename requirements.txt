@@ -1,0 +1,5 @@
+garmin-fit-sdk==21.133.0
+tiktoken
+openai
+pandas
+matplotlib
