@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 # Copy the current directory contents into the container at /usr/src/app
 COPY "Garmin_Running_LLM_Analysis.ipynb" "/usr/src/app/Garmin_Running_LLM_Analysis.ipynb"
 
-COPY "14041604082_ACTIVITY.fit" "/content/14041604082_ACTIVITY.fit"
+#COPY "14041604082_ACTIVITY.fit" "/content/14041604082_ACTIVITY.fit"
 
 COPY "requirements.txt" "/usr/src/app/requirements.txt"
 
@@ -19,7 +19,9 @@ RUN jupyter nbconvert --to script /usr/src/app/Garmin_Running_LLM_Analysis.ipynb
 
 RUN mv /usr/src/app/Garmin_Running_LLM_Analysis.py.txt /usr/src/app/Garmin_Running_LLM_Analysis.py
 
-COPY "script.sh" "/usr/src/app/script.sh"
+COPY "start.sh" "/usr/src/app/start.sh"
+
+RUN chmod +x "/usr/src/app/start.sh"
 
 # Run script.py when the container launches
-CMD ["sh", "./script.sh"]
+ENTRYPOINT ["/usr/src/app/start.sh"]

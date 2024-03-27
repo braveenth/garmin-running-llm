@@ -1,0 +1,57 @@
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: garmin-running-llm
+  namespace: '363786035788'
+  generation: 1
+  labels:
+    cloud.googleapis.com/location: us-central1
+  annotations:
+    client.knative.dev/user-image: us-central1-docker.pkg.dev/running-metrics/running-llm/garmin-running-llm:latest
+    run.googleapis.com/launch-stage: BETA
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: cloud-console
+        client.knative.dev/user-image: us-central1-docker.pkg.dev/running-metrics/running-llm/garmin-running-llm:latest
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          containers:
+          - image: us-central1-docker.pkg.dev/running-metrics/running-llm/garmin-running-llm:latest
+            env:
+            - name: FIT_FILE_PATH
+              value: /data_input/14041604082_ACTIVITY.fit
+            - name: OPENAI_API__KEY
+              valueFrom:
+                secretKeyRef:
+                  key: '1'
+                  name: OPENAI_KEY
+            volumeMounts:
+            - mountPath: /data_input
+              name: input-bucket
+            - mountPath: /content
+              name: output-bucket
+            resources:
+              limits:
+                cpu: 1000m
+                memory: 1Gi
+          volumes:
+          - name: input-bucket
+            csi:
+              driver: gcsfuse.run.googleapis.com
+              readOnly: False
+              volumeAttributes:
+                bucketName: running-llm-input
+          - name: output-bucket
+            csi:
+              driver: gcsfuse.run.googleapis.com
+              readOnly: False
+              volumeAttributes:
+                bucketName: running-llm-output
+          maxRetries: 1
+          serviceAccountName: 363786035788-compute@developer.gserviceaccount.com
+          timeoutSeconds: '600'
