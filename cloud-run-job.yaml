@@ -25,7 +25,7 @@ spec:
             env:
             - name: FIT_FILE_PATH
               value: /data_input/14041604082_ACTIVITY.fit
-            - name: OPENAI_API__KEY
+            - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   key: '1'
