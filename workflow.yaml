@@ -6,7 +6,7 @@ main:
                 - project_id: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
                 - event_bucket: ${"message-payload-" + project_id}
                 - event_file: ${event.id + ".data.json"}
-                - job_name: message-payload-job
+                - job_name: garmin-running-llm
                 - job_location: us-central1
         - log_event:
             call: sys.log
@@ -25,7 +25,7 @@ main:
         - run_job_to_process_fit_file:
             call: googleapis.run.v1.namespaces.jobs.run
             args:
-                name: ${"namespaces/" + project_id + "/jobs/" + garmin-running-llm}
+                name: ${"namespaces/" + project_id + "/jobs/" + job_name}
                 location: ${job_location}
                 body:
                     overrides:
