@@ -1,0 +1,38 @@
+main:
+    params: [event]
+    steps:
+        - init:
+            assign:
+                - project_id: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+                - event_bucket: ${"message-payload-" + project_id}
+                - event_file: ${event.id + ".data.json"}
+                - job_name: message-payload-job
+                - job_location: us-central1
+        - log_event:
+            call: sys.log
+            args:
+                data: ${event}
+        # - write_payload_to_gcs:
+        #     call: http.post
+        #     args:
+        #         url: ${"https://storage.googleapis.com/upload/storage/v1/b/" + event_bucket + "/o"}
+        #         auth:
+        #             type: OAuth2
+        #         query:
+        #             name: ${event_file}
+        #         body:
+        #             ${event.data}
+        - run_job_to_process_fit_file:
+            call: googleapis.run.v1.namespaces.jobs.run
+            args:
+                name: ${"namespaces/" + project_id + "/jobs/" + garmin-running-llm}
+                location: ${job_location}
+                body:
+                    overrides:
+                        containerOverrides:
+                            env:
+                                - name: FIT_FILE_PATH
+                                  value: ${"/data_input/" + event_bucket}
+            result: job_execution
+        - finish:
+            return: ${job_execution}
