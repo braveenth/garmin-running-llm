@@ -3,3 +3,4 @@ tiktoken
 openai
 pandas
 matplotlib
+google-generativeai
