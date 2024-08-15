@@ -30,6 +30,16 @@ spec:
                 secretKeyRef:
                   key: '1'
                   name: OPENAI_KEY
+            - name: AI_STUDIO_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: '1'
+                  name: AI_STUDIO_KEY_1
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: '1'
+                  name: OPENROUTER_KEY
             volumeMounts:
             - mountPath: /data_input
               name: input-bucket
